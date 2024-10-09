@@ -7,17 +7,14 @@ Daarom heb ik een Use case gemaakt, zodat ik wat beter kan definieren wat ik ga 
 Hier de Use case:
 ![usecase](https://github.com/user-attachments/assets/052e206c-d8e0-4036-9605-86b18488bfde)
 
-Integratie met Google Calendar:
-Gebruik de Google Calendar API om vergaderingen te detecteren.&nbsp;
 
-IFTTT voor Automatisering:
-Met IFTTT maak je een Applet waarin het geluidsisolerende systeem de "Vergadermodus" automatisch activeert wanneer een evenement in de Google Calendar begint.&nbsp;
+1. Integratie met Google Calendar
 
-Spraakbediening via Google Assistant:
-Als de gebruiker de vergadering voortijdig beëindigt of handmatig de modus wil aanpassen, kunnen ze eenvoudig zeggen: “Hey Google, beëindig de Vergadermodus”.
+2. IFTTT voor Automatisering
 
-Realtime Synchronisatie:
-Door gebruik te maken van een cloudopslag zoals Firebase of AWS IoT Core, kan het systeem real-time gegevens synchroniseren en continu up-to-date blijven, zodat alle apparaten direct reageren op wijzigingen.
+3. Spraakbediening via Google Assistant
+
+4. Realtime Synchronisatie:
 
 _____________________________________________________________
 
