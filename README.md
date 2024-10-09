@@ -41,6 +41,7 @@ Code for the back-end: First, download npm packages:
 ```
 
 Then setting up to server:
+ps. You want to use your personal Client id, client secret and uri from the google calendar API to let it run your calendar, and ofcourse, your OAuth 2.0 credentials.
 
 ```
 const { google } = require('googleapis');
