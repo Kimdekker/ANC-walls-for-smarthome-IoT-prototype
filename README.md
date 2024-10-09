@@ -1,48 +1,46 @@
 # First things first
 
-Voor ik ben begonnen met code heb ik eerst een plan uitgedacht met meerdere levels of UI en niveaus, zodat ik eerst de basics kan opzetten, en als het lukt steeds een beetje cooler kan zijn :)
+Before starting with coding, I first came up with a plan with multiple levels of UI and stages so that I can set up the basics first, and if it works, I can gradually make it cooler :)
 
-Daarom heb ik een Use case gemaakt, zodat ik wat beter kan definieren wat ik ga doen en op basis daarvan juiste API's kiezen en onderzoeken. 
+Therefore, I created a use case to better define what I will do and, based on that, choose and research the right APIs.
 
-Hier de Use case:
+Here is the use case:
 ![usecase](https://github.com/user-attachments/assets/052e206c-d8e0-4036-9605-86b18488bfde)
 
 
-1. [Integratie met Google Calendar](#googlecalendar)
+1. [Integration with Google Calendar](#Integration)
 
-2. [IFTTT voor Automatisering](#ifttt)
+2. [IFTTT for Automation](#ifttt)
 
-3. [Spraakbediening via Google Assistant](#assistant)
+3. [Voicecontrol via Google Assistant](#voicecontrol)
 
-4. [Realtime Synchronisatie](#realtime)
+4. [Realtime Synchronization](#realtime)
 
 _____________________________________________________________
 
-## Wat heb je nodig:
-- Een ESP32
-- Internetconnectie
-- Speaker module voor de ESP32
-- Google calendar API
+## What do you need:
+- An ESP32
+- Internet connection
+- Speaker module for the ESP32
+- Google Calendar API
 - Google Assistant SDK
 - Firebase
 - Arduino IDE
-- VSCode (of andere code-edittor, voor het opzetten van de server)
+- VSCode (or another code editor, to set up the server)
 
 
 _____________________________________________________________
 
-## Integratie met Google Calendar
-##### googlecalendar
+## Integration with Google Calendar
 
-Ik ben met code begonnen om mijn google calendar te koppelen aan c++ code voor de ESP32, en na wat research erachter gekomen dat ik het best een back-end server (met node) kan laten draaien om de OAuth 2.0 goed te laten werken. Gelukkig was ik de back-ender met project tech vorig jaar, dus kan ik dat wel redelijk.&nbsp;
+I started coding to link my Google Calendar to C++ code for the ESP32. After some research, I found out that it’s best to run a back-end server (with Node) to properly handle OAuth 2.0. Fortunately, I was the back-end developer for Project Tech last year, so I'm quite comfortable with that.
 
-Code voor de back-end:
-eerst npm packages downloaden
+Code for the back-end: First, download npm packages:
 ```
  npm install express googleapis
 ```
 
-Dan de server opzetten:
+Then setting up to server:
 
 ```
 const { google } = require('googleapis');
@@ -89,4 +87,7 @@ app.listen(port, () => {
 
 ```
 
-Daarna
+This server will be hosted locally, so we won’t deploy it to a live, public server. Otherwise, anyone could connect to my Google Calendar… and we definitely don't want that.
+
+Now, your ESP32 will send HTTP requests to this backend server to get the Google Calendar events. 
+Here's how we did that:
