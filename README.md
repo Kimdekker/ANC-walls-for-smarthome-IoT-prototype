@@ -8,15 +8,30 @@ Hier de Use case:
 ![usecase](https://github.com/user-attachments/assets/052e206c-d8e0-4036-9605-86b18488bfde)
 
 
-1. Integratie met Google Calendar
+1. [Integratie met Google Calendar](#googlecalendar)
 
-2. IFTTT voor Automatisering
+2. [IFTTT voor Automatisering](#ifttt)
 
-3. Spraakbediening via Google Assistant
+3. [Spraakbediening via Google Assistant](#assistant)
 
-4. Realtime Synchronisatie:
+4. [Realtime Synchronisatie](#realtime)
 
 _____________________________________________________________
+
+## Wat heb je nodig:
+- Een ESP32
+- Internetconnectie
+- Speaker module voor de ESP32
+- Google calendar API
+- Google Assistant SDK
+- Firebase
+- Arduino IDE
+- VSCode (of andere code-edittor, voor het opzetten van de server)
+
+
+_____________________________________________________________
+
+## Integratie met Google Calendar
 
 Ik ben met code begonnen om mijn google calendar te koppelen aan c++ code voor de ESP32, en na wat research erachter gekomen dat ik het best een back-end server (met node) kan laten draaien om de OAuth 2.0 goed te laten werken. Gelukkig was ik de back-ender met project tech vorig jaar, dus kan ik dat wel redelijk.&nbsp;
 
