@@ -33,6 +33,22 @@ _____________________________________________________________
 
 ## Integration with Google Calendar
 
+Before we will code anything, we are going to create a project in the dashboard for connecting a google API key.
+
+We do that here:
+https://console.cloud.google.com/apis/library/apikeys.googleapis.com?hl=en-GB&project=anc-438112
+
+Then, here create your project by naming it, and then clicking on create.
+![project](https://github.com/user-attachments/assets/d92206cb-1963-4112-8855-3ae9f1b03e07)
+
+And then, if it's not already, click on enable:
+![enable](https://github.com/user-attachments/assets/d6ec2aa1-0b43-4478-a854-1ffda7e6f633)
+
+Then click on manage and you are in the dashboard for your project.
+
+
+#### The coding
+
 I started coding to link my Google Calendar to C++ code for the ESP32. After some research, I found out that it’s best to run a back-end server (with Node) to properly handle OAuth 2.0. Fortunately, I was the back-end developer for Project Tech last year, so I'm quite comfortable with that.
 
 Code for the back-end: First, download npm packages:
