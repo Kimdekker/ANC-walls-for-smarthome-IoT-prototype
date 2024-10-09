@@ -92,3 +92,78 @@ This server will be hosted locally, so we won’t deploy it to a live, public se
 
 Now, your ESP32 will send HTTP requests to this backend server to get the Google Calendar events. 
 Here's how we did that:
+ps. make sure you replace SSID and password with your WiFi credentials, and replace the server url with your own.
+
+```
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+// Replace with your WiFi credentials
+const char* ssid = "YOUR_SSID";
+const char* password = "YOUR_PASSWORD";
+
+// Replace with your backend server URL
+const char* serverName = "http://your-server-ip-or-domain:3000/getGoogleCalendarEvents";
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi..");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("Connected!");
+
+  // Fetch Calendar Data
+  fetchCalendarData();
+}
+
+void loop() {
+  // You can call the fetch function periodically, for example, every 5 minutes
+  delay(300000); // Delay for 5 minutes
+  fetchCalendarData();
+}
+
+void fetchCalendarData() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverName);  // Your backend server address
+
+    int httpResponseCode = http.GET();
+    if (httpResponseCode > 0) {
+      String payload = http.getString();
+      Serial.println("HTTP Response code: " + String(httpResponseCode));
+      Serial.println("Response: " + payload);
+
+      // Parsing the JSON response
+      DynamicJsonDocument doc(4096);
+      deserializeJson(doc, payload);
+
+      Serial.println("Upcoming Events:");
+      for (int i = 0; i < doc.size(); i++) {
+        const char* eventSummary = doc[i]["summary"];
+        const char* eventStart = doc[i]["start"]["dateTime"];
+
+        Serial.print("Event: ");
+        Serial.println(eventSummary);
+        Serial.print("Starts at: ");
+        Serial.println(eventStart);
+      }
+
+    } else {
+      Serial.print("Error on HTTP request: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end();  // Close the connection
+  } else {
+    Serial.println("WiFi not connected");
+  }
+}
+
+```
