@@ -10,7 +10,7 @@ Here is the use case:
 
 1. [Integration with Google Calendar](#integration-with-google-calendar)
 
-2. [IFTTT for Automation](#iftttfor-automation)
+2. [IFTTT for Automation](#ifttt-for-automation)
 
 3. [Voicecontrol via Google Assistant](#voicecontrol-via-google-assistant)
 
