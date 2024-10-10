@@ -342,8 +342,15 @@ And now you get the good screen, you should click the left, smaller button, beca
 ![yay](https://github.com/user-attachments/assets/06d03495-7648-4888-8b21-1f884084dc3d)
 
 Then click on continue, and now we are back on the main 4200 page. And the message says we are connected to the calendar. Yay!
+What we got is a JSON file, we can now do things with that in the C++ code later, but first let's put a calendar event in the calendar, so we can do something with it.
 
+### Add an item to the calendar
+With your own google account (the one that you use for google services and the one that you used to create the API thins above), go to the your google calendar and lets make a meeting there. https://calendar.google.com/calendar/u/0/r
 
+Lets for example make a really long meeting for today, so we can read this out on the ESP later.
+![meeting](https://github.com/user-attachments/assets/d97c23a0-f967-4d69-99e1-a3ad5fa737d5)
+
+Fu fact. When you refresh the JSON page you just got, you'll see it getting longer. That's really good, because now you know for sure it works.
 
 Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
 
