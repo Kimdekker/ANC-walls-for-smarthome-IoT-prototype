@@ -168,8 +168,6 @@ node app.js
 ```
 You'll see in terminal, that you're code is running on your localhost:3000 port.
 
-> **_NOTE:_**  Here is where we have to re-arange some things to make it actually work for the thing we want to do, because we can't run a server on a localhost connection, because that is device based, and we want 2 devices to communicate with each other over the server. 
-
 
 #### Re-arange code and logic
 
@@ -374,6 +372,10 @@ Error on HTTP request: -1
 This means the request to our server running local does not work. 
 This is because we cannot run localhost servers on an ESP, because then the localhost would be on the ESP32. We need our IP adres to replace the localhost. IP adres is the same as calling localhost, but IP adresses are more specific (like in this case, where we need the localhost from the laptop, not the ESP).
 
+> **_NOTE:_**  Here is where we have to re-arange some things to make it actually work for the thing we want to do, because we can't run a server on a localhost connection, because that is device based, and we want 2 devices to communicate with each other over the server. 
+
+
+#### Re-arange and added the right IP
 You can find your IP adress by typing this in the terminal:
 ```
 ifconfig
@@ -397,7 +399,8 @@ So If you checked this all out, replace the url with your IP adress:
 const char* serverName = "http://[your IP adress]:4200/getGoogleCalendarEvents";
 
 ```
-Note that the 4200 the port. If you have another port, type in yours.
+
+> **_NOTE:_**  Note that the port is written behind with a : (so in this case :4200) . If you have another port, type in yours.
 
 
 We will need to make a listener that will make the URl available on all IP networks. This makes the server code a bit more general:
