@@ -537,7 +537,7 @@ What we are going to do is use IFTTT to define our conditions, and when that con
 ### What is IFTTT
 IFTTT stands for If this, then that. So we are going to make some if else statements in our Arduino IDE. This way we can say to the ESP32 > If a new meeting is starting, Then start the Active Noice Cancellation.
 
-## First things first
+## Let our speaker work
 We need to let our speaker work, before we will couple it with the rest of the project. 
 So lets get going...
 
@@ -556,7 +556,7 @@ Then we can put the wires on the pins of the ESP32:
 - Yellow wire -> TX2
 
 After we can put a sound on the microSD card. Choose one from the interwebs, or create your own.
-Put that sound on your SD card and name it by number first, before you call your name > "001_dafunk"
+Put that sound on your SD card and name it by number  > "001_", "002_" etc. I'm using only 1 sound for the prototype.
 
 Then download this library:
 https://github.com/harmsel/SensorLab/blob/main/Componenten/MP3_OpenSmart/RedMP3-library.zip
@@ -567,30 +567,39 @@ And paste that code into a new Arduino uno file.
 ```
 #include "RedMP3.h"
 
-// Define the RX and TX pins
-#define MP3_RX 16 // Connect RX of MP3 module to GPIO 16 (RX2)
-#define MP3_TX 17 // Connect TX of MP3 module to GPIO 17 (TX2)
+#define MP3_RX 17 // Connect RX of MP3 module to GPIO 17 (TX2)
+#define MP3_TX 16 // Connect TX of MP3 module to GPIO 16 (RX2)
 
 // Create an MP3 object with RX and TX pin numbers
 MP3 mp3(MP3_RX, MP3_TX);
 
 void setup() {
-  // Initialize the Serial Monitor for debugging
   Serial.begin(115200); // Baud rate for the Serial Monitor
-  Serial.println("MP3 player setup completed.");
   
-  // Initialize Serial2 for communication with the MP3 module
   Serial2.begin(9600);  // Baud rate for the MP3 module
+
+  mp3.begin();
 }
 
 void loop() {
-  // Play first MP3 file (001_.mp3), set volume to 20 (max is 30)
-  mp3.playWithVolume(1, 20);
-  delay(5000);  // Wait for 5 seconds
+  Serial.println("Playing 001_.mp3");
+  mp3.playWithVolume(1, 20); // Start playing on 20 volume (max = 30)
+
+  delay(60000); // Adjust this delay to the length of your MP3 file
 }
 ```
 
 Add the library by going to: Sketch > Add library > Add .ZIP file... and then pick the zip you downloaded from the github repo.
 
 Then hit the upload button.
+
+The sound will play for 1 minute. You can adjust the length by setting different units on the delay in the loop.
+
+If youn want more files to play after each other, you can copy past the stuff in the loop and change the number from 1 to 2.
+Read more about the library for specific stuff here: https://github.com/harmsel/SensorLab/blob/main/Componenten/MP3_OpenSmart/MP3_OpenSmart.ino
+
+So now that the sound works, lets go to the next step > getting this code together with the google agenda code...
+
+## Hook up the speaker code to the main code file
+So lets go back to the code where we fetched the Google celandar API. We need to add the code from the speaker to this file, and then make conditions based on meetings > If there is a meeting, then play the music.
 
