@@ -448,9 +448,11 @@ ifconfig
 ```
 
 **Check Firewall Settings** 
+
 Ensure that your computer's firewall or antivirus software is not blocking incoming connections on the port your Node.js server is using (4200 in your case).
 You may need to allow Node.js through your firewall.
 
 **Check Server Status** 
+
 Ensure your Node.js server is running and accessible from other devices on the same network. You can check this by trying to access the API from another device (like your phone or another computer) connected to the same Wi-Fi network using the IP address
 
