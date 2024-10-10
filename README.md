@@ -16,9 +16,8 @@ Here is the use case:
 
 4. [Realtime Synchronization](#realtime)
 
-_____________________________________________________________
 
-## What do you need:
+### What do you need:
 - An ESP32
 - Internet connection
 - Speaker module for the ESP32
@@ -29,9 +28,8 @@ _____________________________________________________________
 - VSCode (or another code editor, to set up the server)
 
 
-_____________________________________________________________
 
-## Integration with Google Calendar
+# Integration with Google Calendar
 
 Before we will code anything, we are going to create a project in the dashboard for connecting a google API key.
 
@@ -44,7 +42,48 @@ Then, here create your project by naming it, and then clicking on create.
 And then, if it's not already, click on enable:
 ![enable](https://github.com/user-attachments/assets/d6ec2aa1-0b43-4478-a854-1ffda7e6f633)
 
-Then click on manage and you are in the dashboard for your project.
+Now that we have a project, we have to enable the Google Calendar API.
+So we go to the enabled API's and services tab and click on the button "+ enable API's and services"
+![Untitled](https://github.com/user-attachments/assets/bede7677-ae1e-4f32-9fac-598112e9efc4)
+
+And then type in Calendar. You need this one:
+![calendarAPI](https://github.com/user-attachments/assets/fdf59b40-b63e-478c-970e-0975cefe0c7a)
+
+Then click on enable and then, after a short wait, you are here:
+![API](https://github.com/user-attachments/assets/868c3ad0-6bcd-4602-b48c-227f28358c0d)
+
+We now have to create credentials, so we click on the create credentials button and make some...
+
+You have to select the google calendar API in the first field,
+and then click the second radiobutton. 
+![222](https://github.com/user-attachments/assets/d3435241-53e8-407c-ae1a-4e56cd4837b6)
+
+Then fill in the next step (your own preferable stuff)...
+
+And on the last step, just say you're the owner, and then after skip the last optional fields. 
+![333](https://github.com/user-attachments/assets/d05dbb13-2995-4797-946b-d815e7a96963)
+
+So you're done setting up the basics. 
+Bacause we need the OAuth credentials, we are going back to the credentials tab and make Oauth credentials:
+![0auth](https://github.com/user-attachments/assets/2abf0a7c-2287-494f-aec7-bd2fb66320f5)
+
+The first, click on web application, and then give it a name:
+![WEBAPP](https://github.com/user-attachments/assets/02d34427-3676-4b8e-9a06-0864eeee89ec)
+
+And then put in this uri:
+![localhost300](https://github.com/user-attachments/assets/53432e54-09c7-4e03-b9e2-29cc6970daf9)
+
+Then you're good on here. 
+After you click finish, you'll see your credentials.
+You'll have to download the client secret:
+![download](https://github.com/user-attachments/assets/4a00eeb1-592f-4ae4-b627-98abd17c229e)
+
+In this file you'll then see the keys you need in a JSON file:
+- client_id,
+- client_secret,
+- and redirect_uri
+
+Read the JSON and you'll find what you need. These keys you will need in the next step...
 
 
 #### The coding
@@ -59,6 +98,8 @@ Code for the back-end: First, download npm packages:
 Then setting up to server:
 ps. You want to use your personal Client id, client secret and uri from the google calendar API to let it run your calendar, and ofcourse, your OAuth 2.0 credentials.
 
+
+Open VScode and put this code in it, and call it: app.js
 ```
 const { google } = require('googleapis');
 const express = require('express');
@@ -106,8 +147,28 @@ app.listen(port, () => {
 
 This server will be hosted locally, so we won’t deploy it to a live, public server. Otherwise, anyone could connect to my Google Calendar… and we definitely don't want that.
 
-Now, your ESP32 will send HTTP requests to this backend server to get the Google Calendar events. 
-Here's how we did that:
+So we need to run this code. 
+
+We can do this by typing the next things into your terminal:
+```
+cd desktop
+```
+Now we changes our directory to our desktop. For the ease of this step, I would suggest you put the app.js file in a map on your desktop. But you can put it wherever you want, you just have to change directory trough cd'ing to there. 
+
+So make a map on your desktop, where you store your app.js file in. and then change your derectory from desktop to that map name (we are now in desktop, and from there we will move into your mapname):
+```
+cd [yourmapname]
+```
+
+And then we can let it run by typing this in the terminal:
+```
+node app.js
+```
+You'll see in terminal, that you're code is running on your localhost:3000 port.
+
+Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
+
+So lets set up the ESP32 code:
 ps. make sure you replace SSID and password with your WiFi credentials, and replace the server url with your own.
 
 ```
