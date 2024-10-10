@@ -88,9 +88,13 @@ Read the JSON and you'll find what you need. These keys you will need in the nex
 
 ## The coding
 
-I started coding to link my Google Calendar to C++ code for the ESP32. After some research, I found out that it’s best to run a back-end server (with Node) to properly handle OAuth 2.0. Fortunately, I was the back-end developer for Project Tech last year, so I'm quite comfortable with that.
+I started coding to link my Google Calendar to C++ code for the ESP32. After some research, I found out that it’s best to run a back-end server to properly handle OAuth 2.0. Fortunately, I was the back-end developer for Project Tech last year, so I'm quite comfortable with that.
 
-Code for the back-end: First, download npm packages:
+Code for the back-end: 
+
+First, open VScode and make a new project, and call it: app.js.
+
+After, download npm packages using your terminal:
 ```
  npm install express googleapis
 ```
@@ -98,8 +102,6 @@ Code for the back-end: First, download npm packages:
 Then setting up to server:
 ps. You want to use your personal Client id, client secret and uri from the google calendar API to let it run your calendar, and ofcourse, your OAuth 2.0 credentials.
 
-
-Open VScode and put this code in it, and call it: app.js
 ```
 const { google } = require('googleapis');
 const express = require('express');
@@ -166,87 +168,21 @@ node app.js
 ```
 You'll see in terminal, that you're code is running on your localhost:3000 port.
 
-> **_NOTE:_**  Here is where we have to re-arange some things to make it actually work for the thing we want to do
+> **_NOTE:_**  Here is where we have to re-arange some things to make it actually work for the thing we want to do, because we can't run a server on a localhost connection, because that is device based, and we want 2 devices to communicate with each other over the server. 
 
 
-#### Debuggings
-So what I did is going back to the API Oauth settings, and making some changes at the redirect uri. I added this one in:
+#### Re-arange code and logic
 
-http://localhost:3000/oauth2callback
+I'm going to run the server on another port. 3000 is the default port, and if we want this server to run next to other stuff, It's best to run it on another port. I'm running everything on port 4200. So I adjusted all the uri's and everything in googles api desktop, and in the code.
 
-Then I changed up some code in the file:
+So what we do is going back to the API Oauth settings in the google dashboard, and making some changes at the redirect uri.
+
+We are going to change it to:
 ```
-const { google } = require('googleapis');
-const express = require('express');
-const app = express();
-const port = 3000;
-
-const oAuth2Client = new google.auth.OAuth2(
-    '[your id]', // client id
-    '[your secret]', // client secret
-    'http://localhost:3000/oauth2callback' // Correct redirect URI
-  );
-  
-
-// Step 1: Route to authenticate user and get authorization code
-app.get('/auth', (req, res) => {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline', // Important to get refresh token
-    scope: ['https://www.googleapis.com/auth/calendar.readonly'], // Scope to access Google Calendar
-  });
-  res.redirect(authUrl); // Redirect the user to Google's OAuth 2.0 consent screen
-});
-
-// Step 2: Route to handle OAuth2 callback and exchange code for tokens
-app.get('/oauth2callback', async (req, res) => {
-  const code = req.query.code;
-
-  if (!code) {
-    res.status(400).send('Missing authorization code');
-    return;
-  }
-
-  try {
-    // Exchange the authorization code for access and refresh tokens
-    const { tokens } = await oAuth2Client.getToken(code);
-    oAuth2Client.setCredentials(tokens);
-
-    // Optionally store tokens for future use
-    console.log('Access Token:', tokens.access_token);
-    console.log('Refresh Token:', tokens.refresh_token);
-
-    res.send('Authentication successful! You can now access the calendar.');
-  } catch (err) {
-    res.status(500).send('Error retrieving access token');
-  }
-});
-
-// Step 3: Route to fetch Google Calendar events (only after authentication)
-app.get('/getGoogleCalendarEvents', (req, res) => {
-  const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-
-  calendar.events.list({
-    calendarId: 'primary',
-    timeMin: (new Date()).toISOString(),
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: 'startTime',
-  }, (err, result) => {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      res.json(result.data.items); // Send the event data in JSON format
-    }
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
+http://localhost:4200/oauth2callback
 ```
 
-And after, I'm going to run the server on another port. 3000 is the default port, and if we want this server to run next to other stuff, It's best to run it on another port. I'm running everything on port 4200. So I adjusted all the uri's and everything in googles api desktop, and in the code, and now it works. So lets head on...
+And also in the code for the server...
 
 ```
 const { google } = require('googleapis');
