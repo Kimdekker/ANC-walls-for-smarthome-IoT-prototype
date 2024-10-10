@@ -86,7 +86,7 @@ In this file you'll then see the keys you need in a JSON file:
 Read the JSON and you'll find what you need. These keys you will need in the next step...
 
 
-#### The coding
+## The coding
 
 I started coding to link my Google Calendar to C++ code for the ESP32. After some research, I found out that it’s best to run a back-end server (with Node) to properly handle OAuth 2.0. Fortunately, I was the back-end developer for Project Tech last year, so I'm quite comfortable with that.
 
@@ -352,7 +352,10 @@ Lets for example make a really long meeting for today, so we can read this out o
 
 Fu fact. When you refresh the JSON page you just got, you'll see it getting longer. That's really good, because now you know for sure it works.
 
-Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
+Now, we can let the ESP32 send HTTP requests to this backend server to get the Google Calendar events we need. 
+
+
+## ESP32 code
 
 So lets set up the ESP32 code:
 ps. make sure you replace SSID and password with your WiFi credentials, and replace the server url with your own.
