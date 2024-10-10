@@ -168,6 +168,8 @@ You'll see in terminal, that you're code is running on your localhost:3000 port.
 
 > **_NOTE:_**  Here is where I got stuck, because I needed my acces- and refresh token, and had to go to /auth to get these, but the server wouldn't run... to /auth, and it had to, becasue there i needed to get my tokens to fill in the last bit of the credentials.
 
+
+#### Debuggings
 So what I did is going back to the API Oauth settings, and making some changes at the redirect uri. I added this one in:
 
 http://localhost:3000/oauth2callback
@@ -243,6 +245,105 @@ app.listen(port, () => {
 });
 
 ```
+
+But going to /auth, I still got: Cannot GET /auth. So somethings still wrong with setting up this route.
+
+After some debugging, I found out that there was another server running on port 3000. So, to never make that mistake again, I'm running everything on port 4200. So I adjusted all the uri's and everything in googles api desktop, and in the code, and now it works. So lets head on...
+
+```
+const { google } = require('googleapis');
+const express = require('express');
+const app = express();
+const port = 4200;
+
+// OAuth2 client setup
+const oAuth2Client = new google.auth.OAuth2(
+  '[id]', // client id
+  '[secret]', // client secret
+  'http://localhost:4200/oauth2callback' // redirect URI (must match what you set in Google API console)
+);
+
+// Step 1: Route to initiate authentication
+app.get('/auth', (req, res) => {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline', // Important to get refresh token
+    scope: ['https://www.googleapis.com/auth/calendar.readonly'], // Scope to access Google Calendar
+  });
+  res.redirect(authUrl); // Redirect to the Google consent page
+});
+
+// Step 2: Route to handle OAuth2 callback and get tokens
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    res.status(400).send('Missing authorization code');
+    return;
+  }
+
+  try {
+    // Exchange the authorization code for access and refresh tokens
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens); // Set the tokens in the OAuth2 client
+
+    // Optionally store tokens for future use
+    console.log('Access Token:', tokens.access_token);
+    console.log('Refresh Token:', tokens.refresh_token);
+
+    res.send('Authentication successful! You can now access the calendar. <a href="/getGoogleCalendarEvents">Get Calendar Events</a>');
+  } catch (err) {
+    res.status(500).send('Error retrieving access token');
+  }
+});
+
+// API to fetch Google Calendar events
+app.get('/getGoogleCalendarEvents', async (req, res) => {
+  const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+
+  calendar.events.list({
+    calendarId: 'primary', // Primary calendar or any other calendar ID
+    timeMin: (new Date()).toISOString(),
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime',
+  }, (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.json(result.data.items); // Send the event data in JSON format
+    }
+  });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+```
+
+
+#### continue the manual...
+So now that the server is running, we go to /auth in the browser: http://localhost:4200/auth
+
+We then get redirected from this url to the right login page by google. So there log in.
+![loginfail](https://github.com/user-attachments/assets/1f4f1e9f-a940-4008-b932-89f120ecea47)
+
+Then, you'll probably see this. As you can see, our normal user email adress is not yet verificated as a tester user.
+So we need to do this in the dashboard and go to the consent screen, and there add a test user.
+![addtester](https://github.com/user-attachments/assets/88348b3e-748d-4bbc-8ac8-3f78a12512fe)
+
+You can fill in your own personal info to make yourself a test user.
+![email](https://github.com/user-attachments/assets/99e89389-27fe-480e-ab5c-66aa33af2676)
+
+So now, you are a verified test user and can go to the /auth in your localhost, and re-do the process.
+
+And now you get the good screen, you should click the left, smaller button, because we do know this is right...
+![yay](https://github.com/user-attachments/assets/06d03495-7648-4888-8b21-1f884084dc3d)
+
+Then click on continue, and now we are back on the main 4200 page. And the message says we are connected to the calendar. Yay!
+
+
 
 Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
 
