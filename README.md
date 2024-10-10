@@ -166,6 +166,14 @@ node app.js
 ```
 You'll see in terminal, that you're code is running on your localhost:3000 port.
 
+> **_NOTE:_**  Here is where I got stuck, because I needed my acces- and refresh token, and had to go to /auth to get these, but the server wouldn't run... to /auth
+
+So what I did is going back to the API Oauth settings, and making some changes at the redirect uri. I added this one in:
+
+http://localhost:3000/oauth2callback
+
+
+
 Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
 
 So lets set up the ESP32 code:
