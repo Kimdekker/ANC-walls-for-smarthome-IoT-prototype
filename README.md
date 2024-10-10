@@ -166,7 +166,7 @@ node app.js
 ```
 You'll see in terminal, that you're code is running on your localhost:3000 port.
 
-> **_NOTE:_**  Here is where I got stuck, because I needed my acces- and refresh token, and had to go to /auth to get these, but the server wouldn't run... to /auth, and it had to, becasue there i needed to get my tokens to fill in the last bit of the credentials.
+> **_NOTE:_**  Here is where we have to re-arange some things to make it actually work for the thing we want to do
 
 
 #### Debuggings
