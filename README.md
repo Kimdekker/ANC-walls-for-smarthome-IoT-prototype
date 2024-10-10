@@ -81,7 +81,7 @@ You'll have to download the client secret:
 In this file you'll then see the keys you need in a JSON file:
 - client_id,
 - client_secret,
-- and redirect_uri
+- and redirect_uri (this is the localhost link)
 
 Read the JSON and you'll find what you need. These keys you will need in the next step...
 
