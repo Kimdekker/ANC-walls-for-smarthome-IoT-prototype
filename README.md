@@ -358,7 +358,7 @@ Now, we can let the ESP32 send HTTP requests to this backend server to get the G
 ## ESP32 code
 
 So lets set up the ESP32 code:
-ps. make sure you replace SSID and password with your WiFi credentials, and replace the server url with your own.
+ps. make sure you replace SSID and password with your WiFi credentials, and replace the server url with your own. (in this manual it is http://localhost:4200/getGoogleCalendarEvents)...
 
 ```
 #include <WiFi.h>
