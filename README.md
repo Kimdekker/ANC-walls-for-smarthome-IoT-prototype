@@ -577,11 +577,12 @@ and then uploading the sketch again in Arduino IDE...
 
 > **_NOTE:_**  Make sure you got the right IP adress in the adress as well...
 
-In your serial monitor, you see something like this now"
+In your serial monitor, you see something like this now:
+```
 Upcoming Events:
 Event: Meeting
 Starts at: 2024-10-10T15:00:00+02:00
 .....(more events in your calendar)
+```
 
 This means we did it! Now we coupled the Google Calendar API to our ESP32, and made a server running on our local IP adress to cross the OAuth wall of Google and het the token to be able to fetch the content in the calendar.
-
