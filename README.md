@@ -446,7 +446,10 @@ You can find your IP adress by typing this in the terminal:
 ```
 ifconfig
 ```
-Or go here: https://www.ip-adres.nl/
+
+> **_NOTE:_**  Do not search your IP adress on google on a website or something. The IP that you get in the terminal is the one that you need.
+
+
 
 **Check Firewall Settings** 
 
@@ -464,22 +467,8 @@ const char* serverName = "http://[your IP adress]:4200/getGoogleCalendarEvents";
 ```
 Note that the 4200 the port. If you have another port, type in yours.
 
-Now upload the code again...
 
-If it's not working, you can add this:
-```
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-```
-And upload again, the Serial will show the correct IP adress. So update the url to that IP adress, and upload again...
-
-
-> **_NOTE:_**  Here I got stuck on fetching the API with OAuth, because the localhost and IP adress thing is an issue.
-
-So it's still not working...
-This is because the server running on localhost is not communicating with the IP adress server adress. So they are not finding each other. We will have to add some minor stuff to the app.js server to make it work. 
-
-We will need to make a listener that will make the URl available on all localhost networks:
+We will need to make a listener that will make the URl available on all IP networks. This makes the server code a bit more general:
 ```
 // Start the server on all network interfaces
 app.listen(port, '0.0.0.0', () => {
@@ -487,12 +476,6 @@ app.listen(port, '0.0.0.0', () => {
 });
 ```
 
-And to test if it works, we make a new get request that can send a message to the ESP:
-```
-app.get('/test', (req, res) => {
-  res.send('Hello from the server!');
-});
-```
 
 Also we have to store a token, so we can safely enter the google calendar OAuth policy. The whole code file shoud look like this:
 ```
@@ -576,11 +559,6 @@ app.get('/getGoogleCalendarEvents', async (req, res) => {
   }
 });
 
-// Step 4: Test route for basic server communication
-app.get('/test', (req, res) => {
-  res.send('Hello from the server!');
-});
-
 // Start the server on all network interfaces
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
@@ -588,8 +566,19 @@ app.listen(port, '0.0.0.0', () => {
 
 ```
 
-We can test if this works by running the server again, and then uploading the sketch again in Arduino IDE...
+We can test if this works by running the server again:
 
+First: "control + C" in terminal, to make the server stop running.
+
+And then:
+```
+node app.js
+```
+To rerun the server again
+
+and then uploading the sketch again in Arduino IDE...
+
+> **_NOTE:_**  Make sure you got the right IP adress in the adress as well...
 
 
 
