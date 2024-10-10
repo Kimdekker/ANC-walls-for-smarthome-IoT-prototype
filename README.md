@@ -525,3 +525,72 @@ Starts at: 2024-10-10T15:00:00+02:00
 ```
 
 This means we did it! Now we coupled the Google Calendar API to our ESP32, and made a server running on our local IP adress to cross the OAuth wall of Google and het the token to be able to fetch the content in the calendar.
+
+
+________________________________________________________________________________
+
+# IFTTT for Automation
+
+Now that we have a connection with the Google calendar, we will want to add some conditions to the data, so we can make it smart.
+What we are going to do is use IFTTT to define our conditions, and when that condition is met, we will hear it from out our speaker module.
+
+### What is IFTTT
+IFTTT stands for If this, then that. So we are going to make some if else statements in our Arduino IDE. This way we can say to the ESP32 > If a new meeting is starting, Then start the Active Noice Cancellation.
+
+## First things first
+We need to let our speaker work, before we will couple it with the rest of the project. 
+So lets get going...
+
+Put the Speaker wires into the red board (make sure its the right way, see photo)
+![IMG_3076](https://github.com/user-attachments/assets/1bceb53a-42a8-4157-b682-3102a9fce0bd)
+
+And then the 4 coloured wires onto the 4 pins from the red board:
+![IMG_3077](https://github.com/user-attachments/assets/d6178f09-9ee2-4a08-bee8-64e7164c8f61)
+
+Make sure that it's the good way, so the black wire is on GND. 
+
+Then we can put the wires on the pins of the ESP32:
+- Black wire -> GND
+- Red wire -> 3V3
+- White wire -> RX2
+- Yellow wire -> TX2
+
+After we can put a sound on the microSD card. Choose one from the interwebs, or create your own.
+Put that sound on your SD card and name it by number first, before you call your name > "001_dafunk"
+
+Then download this library:
+https://github.com/harmsel/SensorLab/blob/main/Componenten/MP3_OpenSmart/RedMP3-library.zip
+
+And copy this code:
+
+And paste that code into a new Arduino uno file. 
+```
+#include "RedMP3.h"
+
+// Define the RX and TX pins
+#define MP3_RX 16 // Connect RX of MP3 module to GPIO 16 (RX2)
+#define MP3_TX 17 // Connect TX of MP3 module to GPIO 17 (TX2)
+
+// Create an MP3 object with RX and TX pin numbers
+MP3 mp3(MP3_RX, MP3_TX);
+
+void setup() {
+  // Initialize the Serial Monitor for debugging
+  Serial.begin(115200); // Baud rate for the Serial Monitor
+  Serial.println("MP3 player setup completed.");
+  
+  // Initialize Serial2 for communication with the MP3 module
+  Serial2.begin(9600);  // Baud rate for the MP3 module
+}
+
+void loop() {
+  // Play first MP3 file (001_.mp3), set volume to 20 (max is 30)
+  mp3.playWithVolume(1, 20);
+  delay(5000);  // Wait for 5 seconds
+}
+```
+
+Add the library by going to: Sketch > Add library > Add .ZIP file... and then pick the zip you downloaded from the github repo.
+
+Then hit the upload button.
+
