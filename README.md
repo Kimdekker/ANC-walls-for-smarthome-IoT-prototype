@@ -557,6 +557,7 @@ Then we can put the wires on the pins of the ESP32:
 
 After we can put a sound on the microSD card. Choose one from the interwebs, or create your own.
 Put that sound on your SD card and name it by number  > "001_", "002_" etc. I'm using only 1 sound for the prototype.
+After putting in the sound on the SD, shove the SD card in the SC card slot on the red board
 
 Then download this library:
 https://github.com/harmsel/SensorLab/blob/main/Componenten/MP3_OpenSmart/RedMP3-library.zip
