@@ -481,12 +481,12 @@ Also we have to store a token, so we can safely enter the google calendar OAuth 
 ```
 const { google } = require('googleapis');
 const express = require('express');
-const fs = require('fs'); // For token persistence
+const fs = require('fs');
 const app = express();
 const port = 4200;
 
 const oAuth2Client = new google.auth.OAuth2(
-  '[id]', // Client ID
+  '[client id]', // Client ID
   '[secret]', // Client Secret
   'http://localhost:4200/oauth2callback' // Redirect URI
 );
@@ -545,7 +545,7 @@ app.get('/getGoogleCalendarEvents', async (req, res) => {
 
     // Fetch upcoming events
     const result = await calendar.events.list({
-      calendarId: 'primary', // Primary calendar or other calendar ID
+      calendarId: 'primary',
       timeMin: (new Date()).toISOString(),
       maxResults: 10,
       singleEvents: true,
@@ -563,6 +563,7 @@ app.get('/getGoogleCalendarEvents', async (req, res) => {
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
 });
+
 
 ```
 
