@@ -246,9 +246,7 @@ app.listen(port, () => {
 
 ```
 
-But going to /auth, I still got: Cannot GET /auth. So somethings still wrong with setting up this route.
-
-After some debugging, I found out that there was another server running on port 3000. So, to never make that mistake again, I'm running everything on port 4200. So I adjusted all the uri's and everything in googles api desktop, and in the code, and now it works. So lets head on...
+And after, I'm going to run the server on another port. 3000 is the default port, and if we want this server to run next to other stuff, It's best to run it on another port. I'm running everything on port 4200. So I adjusted all the uri's and everything in googles api desktop, and in the code, and now it works. So lets head on...
 
 ```
 const { google } = require('googleapis');
@@ -322,8 +320,6 @@ app.listen(port, () => {
 
 ```
 
-
-#### continue the manual...
 So now that the server is running, we go to /auth in the browser: http://localhost:4200/auth
 
 We then get redirected from this url to the right login page by google. So there log in.
@@ -350,7 +346,7 @@ With your own google account (the one that you use for google services and the o
 Lets for example make a really long meeting for today, so we can read this out on the ESP later.
 ![meeting](https://github.com/user-attachments/assets/d97c23a0-f967-4d69-99e1-a3ad5fa737d5)
 
-Fu fact. When you refresh the JSON page you just got, you'll see it getting longer. That's really good, because now you know for sure it works.
+Fun fact. When you refresh the JSON page you just got, you'll see it getting longer. That's really good, because now you know for sure it works.
 
 Now, we can let the ESP32 send HTTP requests to this backend server to get the Google Calendar events we need. 
 
