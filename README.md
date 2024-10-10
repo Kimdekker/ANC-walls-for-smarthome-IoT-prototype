@@ -446,6 +446,7 @@ You can find your IP adress by typing this in the terminal:
 ```
 ifconfig
 ```
+Or go here: https://www.ip-adres.nl/
 
 **Check Firewall Settings** 
 
@@ -454,5 +455,141 @@ You may need to allow Node.js through your firewall.
 
 **Check Server Status** 
 
-Ensure your Node.js server is running and accessible from other devices on the same network. You can check this by trying to access the API from another device (like your phone or another computer) connected to the same Wi-Fi network using the IP address
+Ensure your Node.js server is running and accessible from other devices on the same network. You can check this by trying to access the API from another device (like your phone or another computer) connected to the same Wi-Fi network using the IP address.
+
+So If you checked this all out, replace the url with your IP adress:
+```
+const char* serverName = "http://[your IP adress]:4200/getGoogleCalendarEvents";
+
+```
+Note that the 4200 the port. If you have another port, type in yours.
+
+Now upload the code again...
+
+If it's not working, you can add this:
+```
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+```
+And upload again, the Serial will show the correct IP adress. So update the url to that IP adress, and upload again...
+
+
+> **_NOTE:_**  Here I got stuck on fetching the API with OAuth, because the localhost and IP adress thing is an issue.
+
+So it's still not working...
+This is because the server running on localhost is not communicating with the IP adress server adress. So they are not finding each other. We will have to add some minor stuff to the app.js server to make it work. 
+
+We will need to make a listener that will make the URl available on all localhost networks:
+```
+// Start the server on all network interfaces
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
+});
+```
+
+And to test if it works, we make a new get request that can send a message to the ESP:
+```
+app.get('/test', (req, res) => {
+  res.send('Hello from the server!');
+});
+```
+
+Also we have to store a token, so we can safely enter the google calendar OAuth policy. The whole code file shoud look like this:
+```
+const { google } = require('googleapis');
+const express = require('express');
+const fs = require('fs'); // For token persistence
+const app = express();
+const port = 4200;
+
+const oAuth2Client = new google.auth.OAuth2(
+  '[id]', // Client ID
+  '[secret]', // Client Secret
+  'http://localhost:4200/oauth2callback' // Redirect URI
+);
+
+// Path to store token
+const TOKEN_PATH = 'token.json';
+
+// Step 1: Route to initiate authentication
+app.get('/auth', (req, res) => {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline', // Important to get refresh token
+    scope: ['https://www.googleapis.com/auth/calendar.readonly'], // Scope to access Google Calendar
+  });
+  res.redirect(authUrl); // Redirect to the Google consent page
+});
+
+// Step 2: OAuth2 callback and getting tokens
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    res.status(400).send('Missing authorization code');
+    return;
+  }
+
+  try {
+    // Exchange the authorization code for access and refresh tokens
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens); // Set the tokens
+
+    // Save tokens for future use
+    fs.writeFile(TOKEN_PATH, JSON.stringify(tokens), (err) => {
+      if (err) return console.error('Error saving token', err);
+      console.log('Token stored to', TOKEN_PATH);
+    });
+
+    res.send('Authentication successful! You can now access the calendar. <a href="/getGoogleCalendarEvents">Get Calendar Events</a>');
+  } catch (err) {
+    console.error('Error retrieving access token:', err);
+    res.status(500).send('Error retrieving access token');
+  }
+});
+
+// Step 3: Fetch Google Calendar events
+app.get('/getGoogleCalendarEvents', async (req, res) => {
+  try {
+    // Load stored token if available
+    if (fs.existsSync(TOKEN_PATH)) {
+      const token = fs.readFileSync(TOKEN_PATH);
+      oAuth2Client.setCredentials(JSON.parse(token));
+    } else {
+      return res.status(401).send('Token not found, please authenticate at /auth');
+    }
+
+    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+
+    // Fetch upcoming events
+    const result = await calendar.events.list({
+      calendarId: 'primary', // Primary calendar or other calendar ID
+      timeMin: (new Date()).toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    res.json(result.data.items); // Send the event data in JSON format
+  } catch (err) {
+    console.error('Error fetching calendar events:', err);
+    res.status(500).send('Error fetching calendar events');
+  }
+});
+
+// Step 4: Test route for basic server communication
+app.get('/test', (req, res) => {
+  res.send('Hello from the server!');
+});
+
+// Start the server on all network interfaces
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
+});
+
+```
+
+We can test if this works by running the server again, and then uploading the sketch again in Arduino IDE...
+
+
+
 
