@@ -370,7 +370,7 @@ const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
 // Replace with your backend server URL
-const char* serverName = "http://your-server-ip-or-domain:3000/getGoogleCalendarEvents";
+const char* serverName = "http://localhost:4200/getGoogleCalendarEvents";
 
 void setup() {
   Serial.begin(115200);
