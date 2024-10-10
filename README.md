@@ -433,3 +433,5 @@ void fetchCalendarData() {
 }
 
 ```
+
+Whit this code, we fetch the JSON running on our backend server, and printing the data we want in the serial monitor. In this basic code, we are going to fetch all the events listed in my personal agenda, and listing them in the serial monitor.
