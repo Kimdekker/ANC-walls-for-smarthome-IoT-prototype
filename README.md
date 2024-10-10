@@ -166,13 +166,83 @@ node app.js
 ```
 You'll see in terminal, that you're code is running on your localhost:3000 port.
 
-> **_NOTE:_**  Here is where I got stuck, because I needed my acces- and refresh token, and had to go to /auth to get these, but the server wouldn't run... to /auth
+> **_NOTE:_**  Here is where I got stuck, because I needed my acces- and refresh token, and had to go to /auth to get these, but the server wouldn't run... to /auth, and it had to, becasue there i needed to get my tokens to fill in the last bit of the credentials.
 
 So what I did is going back to the API Oauth settings, and making some changes at the redirect uri. I added this one in:
 
 http://localhost:3000/oauth2callback
 
+Then I changed up some code in the file:
+```
+const { google } = require('googleapis');
+const express = require('express');
+const app = express();
+const port = 3000;
 
+const oAuth2Client = new google.auth.OAuth2(
+    '[your id]', // client id
+    '[your secret]', // client secret
+    'http://localhost:3000/oauth2callback' // Correct redirect URI
+  );
+  
+
+// Step 1: Route to authenticate user and get authorization code
+app.get('/auth', (req, res) => {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline', // Important to get refresh token
+    scope: ['https://www.googleapis.com/auth/calendar.readonly'], // Scope to access Google Calendar
+  });
+  res.redirect(authUrl); // Redirect the user to Google's OAuth 2.0 consent screen
+});
+
+// Step 2: Route to handle OAuth2 callback and exchange code for tokens
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    res.status(400).send('Missing authorization code');
+    return;
+  }
+
+  try {
+    // Exchange the authorization code for access and refresh tokens
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+
+    // Optionally store tokens for future use
+    console.log('Access Token:', tokens.access_token);
+    console.log('Refresh Token:', tokens.refresh_token);
+
+    res.send('Authentication successful! You can now access the calendar.');
+  } catch (err) {
+    res.status(500).send('Error retrieving access token');
+  }
+});
+
+// Step 3: Route to fetch Google Calendar events (only after authentication)
+app.get('/getGoogleCalendarEvents', (req, res) => {
+  const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+
+  calendar.events.list({
+    calendarId: 'primary',
+    timeMin: (new Date()).toISOString(),
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime',
+  }, (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.json(result.data.items); // Send the event data in JSON format
+    }
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+```
 
 Now, your ESP32 will eventually send HTTP requests to this backend server to get the Google Calendar events. 
 
