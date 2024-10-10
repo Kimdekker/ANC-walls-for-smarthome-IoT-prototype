@@ -8,7 +8,7 @@ Here is the use case:
 ![usecase](https://github.com/user-attachments/assets/052e206c-d8e0-4036-9605-86b18488bfde)
 
 
-1. [Integration with Google Calendar](#Integration)
+1. [Integration with Google Calendar](#integration)
 
 2. [IFTTT for Automation](#ifttt)
 
