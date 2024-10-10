@@ -10,11 +10,11 @@ Here is the use case:
 
 1. [Integration with Google Calendar](#integration-with-google-calendar)
 
-2. [IFTTT for Automation](#ifttt)
+2. [IFTTT for Automation](#iftttfor-automation)
 
-3. [Voicecontrol via Google Assistant](#voicecontrol)
+3. [Voicecontrol via Google Assistant](#voicecontrol-via-google-assistant)
 
-4. [Realtime Synchronization](#realtime)
+4. [Realtime Synchronization](#realtime-synchronization)
 
 
 ### What do you need:
