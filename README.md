@@ -604,3 +604,167 @@ So now that the sound works, lets go to the next step > getting this code togeth
 ## Hook up the speaker code to the main code file
 So lets go back to the code where we fetched the Google celandar API. We need to add the code from the speaker to this file, and then make conditions based on meetings > If there is a meeting, then play the music.
 
+#### First make the IFTTT logic
+So first we make the logic work by making general statements and the serial monitor. This way, we can first focus on building the IFTTT logics right, and then building the speaker functions in it.
+
+We are going to need a new library. You can use this library for handling time more easily:
+```
+#include <TimeLib.h>
+```
+
+And then create a string variable for storing the events starting time below the #includes:
+```
+String lastEventStartTime = "";  // Variable to store the last event's start time
+```
+
+
+Then, in the bottom of the file, we are going to make a new function:
+
+```
+bool isEventHappeningNow(const char* eventStartTime, const char* eventEndTime) {
+  // Parse the event start and end times into Unix timestamps
+  time_t startTime = parseISO8601Time(String(eventStartTime));
+  time_t endTime = parseISO8601Time(String(eventEndTime));
+
+  // Get the current time
+  time_t currentTime = now();
+
+  // Check if the current time is within the event's start and end times
+  if (currentTime >= startTime && currentTime <= endTime) {
+    return true;  // Event is happening now
+  }
+  return false;
+}
+
+// Function to parse ISO 8601 date-time string (e.g., "2024-10-11T10:30:00+02:00") into Unix timestamp
+time_t parseISO8601Time(String timeStr) {
+  int year, month, day, hour, minute, second, tz_hour = 0, tz_minute = 0;
+  char tz_sign = '+';
+
+  // Extract date, time, and timezone components from the ISO 8601 string
+  sscanf(timeStr.c_str(), "%d-%d-%dT%d:%d:%d%c%d:%d", &year, &month, &day, &hour, &minute, &second, &tz_sign, &tz_hour, &tz_minute);
+
+  // Convert to Unix time
+  tmElements_t tm;
+  tm.Year = year - 1970;  // TimeLib expects years since 1970
+  tm.Month = month;
+  tm.Day = day;
+  tm.Hour = hour;
+  tm.Minute = minute;
+  tm.Second = second;
+
+  // Calculate the timezone offset in seconds
+  long tz_offset = (tz_hour * 3600L) + (tz_minute * 60L);
+  if (tz_sign == '-') {
+    tz_offset = -tz_offset;
+  }
+
+  // Return the event's Unix timestamp adjusted for the timezone offset
+  return makeTime(tm) - tz_offset;
+}
+```
+
+> **_NOTE:_**  Check if this code is the right time for your timezone. I'm working with dutch timezone
+
+In this function we find out if an event is happening now, if so, return true, otherwisereturn false. In the fucntion under there, we calculate time. We are not really looking in to that.
+
+Now we can call this function in our for loop for upcoming events and write our defenition of an event that starts and ends:
+
+```
+      for (int i = 0; i < doc.size(); i++) {
+        const char* eventSummary = doc[i]["summary"];
+        const char* eventStart = doc[i]["start"]["dateTime"];
+        const char* eventEnd = doc[i]["end"]["dateTime"];
+
+        Serial.print("Event: ");
+        Serial.println(eventSummary);
+        Serial.print("Starts at: ");
+        Serial.println(eventStart);
+        Serial.print("Ends at: ");
+        Serial.println(eventEnd);
+
+        // Check if the event is happening now
+        if (isEventHappeningNow(eventStart, eventEnd)) {
+          Serial.println("New event is happening now!");
+        }
+      }
+```
+
+In the serial monitor, you now get a message that tells you which times the events are starting and which times they are ending
+
+```
+Upcoming Events:
+Event: Meeting code
+Starts at: 2024-10-11T13:30:00+02:00
+Ends at: 2024-10-11T21:30:00+02:00
+Event: CMDonderdag: Peter Biľak
+Starts at: 2024-10-17T16:00:00+02:00
+Ends at: 2024-10-17T18:00:00+02:00
+Event: Avond van De Filmmuziek 2024
+Starts at: 2024-11-15T20:00:00+01:00
+Ends at: 2024-11-15T21:00:00+01:00
+....
+```
+
+Now we need to match that start/end time, with the current time and say > if the event has started, give me a message that it has started, and if not, then show nothing...
+
+To do nthis we have to add something extra in the function:
+```
+bool isEventHappeningNow(const char* eventStartTime, const char* eventEndTime) {
+  // Parse the event start and end times into Unix timestamps
+  time_t startTime = parseISO8601Time(String(eventStartTime));
+  time_t endTime = parseISO8601Time(String(eventEndTime));
+
+  // Get the current time
+  time_t currentTime = now();
+
+  // Check if the current time is within the event's start and end times
+  return (currentTime >= startTime && currentTime <= endTime);
+}
+```
+
+We make something that we can check the current time on, and then, and then fix the logic in the for loop:
+```
+      for (int i = 0; i < doc.size(); i++) {
+        const char* eventSummary = doc[i]["summary"];
+        const char* eventStart = doc[i]["start"]["dateTime"];
+        const char* eventEnd = doc[i]["end"]["dateTime"];
+
+        Serial.print("Event: ");
+        Serial.println(eventSummary);
+        Serial.print("Starts at: ");
+        Serial.println(eventStart);
+        Serial.print("Ends at: ");
+        Serial.println(eventEnd);
+
+        // Check if the event is happening now
+        if (isEventHappeningNow(eventStart, eventEnd)) {
+          Serial.println("An event is happening right now: " + String(eventSummary));
+          eventHappeningNow = true;  // Set flag to true if any event is happening now
+        }
+        else if (!isEventHappeningNow) {
+          Serial.println("No events are happening right now.");
+          eventHappeningNow = false;
+        }
+      }
+```
+We also made a message if there are no events happening in the else. So there you have the IFTTT logic. If, else if and else. 
+The if else is like that because, there will always be meetings that are niot happening, but we dont want both messages, so now we are being more specific.
+
+So now we've got this in the serial monitor:
+```
+Upcoming Events:
+Event: Meeting code
+Starts at: 2024-10-11T13:30:00+02:00
+Ends at: 2024-10-11T21:30:00+02:00
+An event is happening right now: Meeting code
+Event: CMDonderdag: Peter Biľak
+Starts at: 2024-10-17T16:00:00+02:00
+Ends at: 2024-10-17T18:00:00+02:00
+Event: Avond van De Filmmuziek 2024
+Starts at: 2024-11-15T20:00:00+01:00
+Ends at: 2024-11-15T21:00:00+01:00
+```
+
+You see the line: An event is happening right now: Meeting code. 
+That's what we just built
