@@ -601,10 +601,9 @@ Read more about the library for specific stuff here: https://github.com/harmsel/
 
 So now that the sound works, lets go to the next step > getting this code together with the google agenda code...
 
-## Hook up the speaker code to the main code file
-So lets go back to the code where we fetched the Google celandar API. We need to add the code from the speaker to this file, and then make conditions based on meetings > If there is a meeting, then play the music.
+_________________________________________________
 
-#### First make the IFTTT logic
+## First make the IFTTT logic
 So first we make the logic work by making general statements and the serial monitor. This way, we can first focus on building the IFTTT logics right, and then building the speaker functions in it.
 
 We are going to need a new library. You can use this library for handling time more easily:
@@ -767,4 +766,63 @@ Ends at: 2024-11-15T21:00:00+01:00
 ```
 
 You see the line: An event is happening right now: Meeting code. 
-That's what we just built
+That's what we just built.
+
+_____________________________________________________________
+
+## Let's build in the speaker code into the IFTTT
+We need to add the code from the speaker to this file, and then make conditions based on meetings > If there is a meeting, then play the music.
+
+Now that we've got the If else staements ready, and the speakers correctly wired in, we have to copy paste the speaker code into our main file:
+
+First drag in the library, pins defined and the mp3 pins connected lines to the top of our main file:
+```
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include <TimeLib.h>  
+#include "RedMP3.h" // Here the library
+
+// And define the pins below
+#define MP3_RX 17 // Connect RX of MP3 module to GPIO 17 (TX2)
+#define MP3_TX 16 // Connect TX of MP3 module to GPIO 16 (RX2)
+
+// Create an MP3 object with RX and TX pin numbers
+MP3 mp3(MP3_RX, MP3_TX); 
+```
+
+Then in the void setup, copy paste those lines in, you can add them in the bottom:
+```
+Serial2.begin(9600);  // Baud rate for the MP3 module
+mp3.begin();
+```
+
+And then we can go to the If else statements in the loop and add the logic in like this:
+```
+        if (isEventHappeningNow(eventStart, eventEnd)) {
+          Serial.println("An event is happening right now: " + String(eventSummary));
+          eventHappeningNow = true;  // Set flag to true if any event is happening now
+
+          mp3.playWithVolume(1, 20); // Start playing on 20 volume (max = 30)
+          delay(60000);
+        }
+        else if (!isEventHappeningNow) {
+          Serial.println("No events are happening right now.");
+          eventHappeningNow = false;
+        }
+```
+
+So if there is an event happening, play the sound on the speaker.
+And there we have it, it works. By the way I commented out the serial prints for the vents itself, because we dont need that data...
+```
+        // Serial.print("Event: ");
+        // Serial.println(eventSummary);
+        // Serial.print("Starts at: ");
+        // Serial.println(eventStart);
+        // Serial.print("Ends at: ");
+        // Serial.println(eventEnd);
+```
+
+But you can leave it in if you want to.
