@@ -889,3 +889,12 @@ void loop() {
 Here we catch the requests from the IFTTT server and can eventually do something with that request. Perhaps we could use it in our If else statements...
 
 Here my manual will end however, because I won't be paying for this demo... :(
+
+
+## Contributors
+- Kim Dekker [Github](https://github.com/Kimdekker/)
+
+
+## Licentie
+
+This project is provided under the [MIT](/LICENSE) License
