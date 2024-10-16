@@ -4,9 +4,9 @@ Before starting with coding, I first came up with a plan with multiple levels of
 
 Therefore, I created a use case to better define what I will do and, based on that, choose and research the right APIs.
 
-Here is the use case:
-![usecase](https://github.com/user-attachments/assets/052e206c-d8e0-4036-9605-86b18488bfde)
-
+### My use case
+Automaticly starting the meeting mode on SoundSense when the user has a meeting.
+We will do this with Google Calendar and a spreaker module
 
 1. [Integration with Google Calendar](#integration-with-google-calendar)
 
@@ -14,16 +14,13 @@ Here is the use case:
 
 3. [Voicecontrol via Google Assistant](#voicecontrol-via-google-assistant)
 
-4. [Realtime Synchronization](#realtime-synchronization)
-
 
 ### What do you need:
 - An ESP32
 - Internet connection
 - Speaker module for the ESP32
 - Google Calendar API
-- Google Assistant SDK
-- Firebase
+- IFTTT
 - Arduino IDE
 - VSCode (or another code editor, to set up the server)
 
