@@ -826,3 +826,59 @@ And there we have it, it works. By the way I commented out the serial prints for
 ```
 
 But you can leave it in if you want to.
+
+
+
+# Voicecontrol via Google Assistant
+
+We just made the basic funtionality of the app. To make it really cool, we can add our Google Home devices to this project. 
+
+We just used IFTTT to make if else statements, so now we understand the technology. IFTTT however, has a service where you can connect your smart home devices like Philips Hue or Google Assistant to make custom things happen. In our case we want that! So lets get started with IFTTT for voicecontrol via Google assistant.
+PS. You can also add calendar events using IFTTT, so if you want you could use IFTTT if you want to do more advanced things with the calendar. We just did it by hand because the action was really small and custom to demo, but I suggest using IFTTT if you want to use this for more advanced stuff.
+
+However IFTTT is not free for making what we want. It's a subscribtion for around 14 dollar a month, but if you want to make your whole home custom smart, then I suggest using this, because it's really easy and fast.
+
+You could also use Google Cloud service, thats supposed to be a bit more flexible, but that is paid as well. 
+
+From here, it should be actually really easy to make custom Google Assistant commands. Using IFTTT You'll need to make an applet, and then by If this, search for google assistant and select the default, and then select Webhooks for the then that. And then you can make a webrequest. That webrequest will send Get and Post requests to your ESP32 and then communicate with you service that way. Then you could add that code by doing something like this example:
+
+```
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+
+const char* ssid = "your-ssid";
+const char* password = "your-password";
+
+AsyncWebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  server.on("/light/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    // Code to turn on the light
+    request->send(200, "text/plain", "Light On");
+  });
+
+  server.on("/light/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    // Code to turn off the light
+    request->send(200, "text/plain", "Light Off");
+  });
+
+  server.begin();
+}
+
+void loop() {
+  // Your loop code
+}
+
+```
+
+Here we catch the requests from the IFTTT server and can eventually do something with that request. Perhaps we could use it in our If else statements...
+
+Here my manual will end however, because I won't be paying for this demo... :(
