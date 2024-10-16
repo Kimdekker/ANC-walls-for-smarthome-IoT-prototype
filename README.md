@@ -867,14 +867,14 @@ void setup() {
     Serial.println("Connecting to WiFi...");
   }
 
-  server.on("/light/on", HTTP_GET, [](AsyncWebServerRequest *request){
-    // Code to turn on the light
-    request->send(200, "text/plain", "Light On");
+  server.on("/speaker/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    // Code to turn on the speaker
+    request->send(200, "text/plain", "Speaker On");
   });
 
-  server.on("/light/off", HTTP_GET, [](AsyncWebServerRequest *request){
-    // Code to turn off the light
-    request->send(200, "text/plain", "Light Off");
+  server.on("/speaker/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    // Code to turn off the speaker
+    request->send(200, "text/plain", "Speaker Off");
   });
 
   server.begin();
