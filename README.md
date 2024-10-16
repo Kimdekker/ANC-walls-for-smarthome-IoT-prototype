@@ -4,6 +4,12 @@ Before starting with coding, I first came up with a plan with multiple levels of
 
 Therefore, I created a use case to better define what I will do and, based on that, choose and research the right APIs.
 
+### When to be cautious
+When you come across this thing:
+> **_NOTE:_**  Here is something to note
+
+You should be extra sure to do the right thing, and might give you the answer to why something isn't working on your project...
+
 ### My use case
 Automaticly starting the meeting mode on SoundSense when the user has a meeting.
 We will do this with Google Calendar and a spreaker module
