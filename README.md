@@ -840,7 +840,17 @@ However IFTTT is not free for making what we want. It's a subscribtion for aroun
 
 You could also use Google Cloud service, thats supposed to be a bit more flexible, but that is paid as well. 
 
-From here, it should be actually really easy to make custom Google Assistant commands. Using IFTTT You'll need to make an applet, and then by If this, search for google assistant and select the default, and then select Webhooks for the then that. And then you can make a webrequest. That webrequest will send Get and Post requests to your ESP32 and then communicate with you service that way. Then you could add that code by doing something like this example:
+From here, it should be actually really easy to make custom Google Assistant commands. Using IFTTT You'll need to make an applet,
+![5555](https://github.com/user-attachments/assets/4ad77886-eb0c-46f9-ad0a-f2bb4274f186)
+
+and then by If this, search for google assistant and select the default, and then select Webhooks for the then that. 
+![6666](https://github.com/user-attachments/assets/eda23547-de48-4b5d-9a0e-a6574d0840cb)
+
+And then you can make a webrequest. That webrequest will send Get and Post requests to your ESP32 and then communicate with you service that way. 
+![9999](https://github.com/user-attachments/assets/119aa7db-517d-407a-83d5-8a319653018f)
+
+
+Then you could add that code by doing something like this example:
 
 ```
 #include <WiFi.h>
